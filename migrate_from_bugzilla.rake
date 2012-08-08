@@ -470,12 +470,18 @@ module ActiveRecord
         def self.create_custom_qa_contact_field
           custom = IssueCustomField.find_by_name(QA_CONTACT_FIELDNAME)
           return if custom
-          custom = IssueCustomField.new({:name => QA_CONTACT_FIELDNAME,
+          custom = IssueCustomField.new({:regexp => "",
+                                          :position => 1,
+                                          :name => QA_CONTACT_FIELDNAME,
                                           :is_required => true,
+                                          :min_length => 0,
+                                          :default_value => "",                                       
                                           :searchable => true,
+                                          :is_for_all => true,
+                                          :max_length => 0,
+                                          :is_filter => true,
                                           :editable => true,
-                                          :field_format => "user",
-                                          :is_for_all => true })
+                                          :field_format => "user" })
           custom.save!
 
           Tracker.all.each do |t|
@@ -516,6 +522,7 @@ module ActiveRecord
 
         BugzillaMigrate.establish_connection db_params
         BugzillaMigrate.create_custom_bug_id_field
+	BugzillaMigrate.create_custom_qa_contact_field
         BugzillaMigrate.migrate_users
         BugzillaMigrate.migrate_products
         BugzillaMigrate.migrate_issues
