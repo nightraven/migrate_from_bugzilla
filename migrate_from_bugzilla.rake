@@ -103,6 +103,7 @@ module ActiveRecord
         }
 
         BUGZILLA_ID_FIELDNAME = "Bugzilla-Id"
+        QA_CONTACT_FIELDNAME = "QA-Contact"
 
         class BugzillaProfile < ActiveRecord::Base
           set_table_name :profiles
@@ -466,6 +467,23 @@ module ActiveRecord
            end
         end
 
+        def self.create_custom_qa_contact_field
+          custom = IssueCustomField.find_by_name(QA_CONTACT_FIELDNAME)
+          return if custom
+          custom = IssueCustomField.new({:name => QA_CONTACT_FIELDNAME,
+                                          :is_required => true,
+                                          :searchable => true,
+                                          :editable => true,
+                                          :field_format => "user",
+                                          :is_for_all => true })
+          custom.save!
+
+          Tracker.all.each do |t|
+            t.custom_fields << custom
+            t.save!
+          end
+        end
+
         puts
         puts "WARNING: Your Redmine data could be corrupted during this process."
         print "Are you sure you want to continue ? [y/N] "
@@ -497,7 +515,7 @@ module ActiveRecord
 
 
         BugzillaMigrate.establish_connection db_params
-        #BugzillaMigrate.create_custom_bug_id_field
+        BugzillaMigrate.create_custom_bug_id_field
         BugzillaMigrate.migrate_users
         BugzillaMigrate.migrate_products
         BugzillaMigrate.migrate_issues
