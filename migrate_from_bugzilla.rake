@@ -393,13 +393,6 @@ module ActiveRecord
               journal.save!
             end
 
-            # Add a journal entry to capture the original bugzilla bug ID
-            journal = Journal.new(
-              :journalized => issue,
-              :user_id => 1,
-              :notes => "Original Bugzilla ID was #{bug.id}"
-            )
-            journal.save!
 
             # Additionally save the original bugzilla bug ID as custom field value.
             issue.custom_field_values = { custom_field.id => "#{bug.id}" }
@@ -504,7 +497,7 @@ module ActiveRecord
 
 
         BugzillaMigrate.establish_connection db_params
-        BugzillaMigrate.create_custom_bug_id_field
+        #BugzillaMigrate.create_custom_bug_id_field
         BugzillaMigrate.migrate_users
         BugzillaMigrate.migrate_products
         BugzillaMigrate.migrate_issues
