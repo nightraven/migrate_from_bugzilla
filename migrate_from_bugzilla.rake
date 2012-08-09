@@ -397,7 +397,8 @@ module ActiveRecord
 
 
             # Additionally save the original bugzilla bug ID as custom field value.
-            puts "{bug.qa_contact}"
+            print "QA: {bug.qa_contact} "
+            print "{map_user(bug.qa_contact)}"
             issue.custom_field_values = { custom_field_bug_id.id => "#{bug.id}", custom_field_qa_contact.id => "{map_user(bug.qa_contact)}" }
             issue.save_custom_field_values
 
@@ -493,11 +494,11 @@ module ActiveRecord
         break unless STDIN.gets.match(/^y$/i)
 
         # Default Bugzilla database settings
-        db_params = {:adapter => 'mysql',
-          :database => 'bugs',
+        db_params = {:adapter => 'mysql2',
+          :database => 'bugzilla',
           :host => 'localhost',
           :port => 3306,
-          :username => '',
+          :username => 'root',
           :password => '',
           :encoding => 'utf8'}
 
