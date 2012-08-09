@@ -351,7 +351,8 @@ module ActiveRecord
           # Issue.destroy_all
           @issue_map = {}
 
-          custom_field = IssueCustomField.find_by_name(BUGZILLA_ID_FIELDNAME)
+          custom_field_bug_id = IssueCustomField.find_by_name(BUGZILLA_ID_FIELDNAME)
+          custom_field_qa_contact = IssueCustomField.find_by_name(QA_CONTACT_FIELDNAME)
 
           BugzillaBug.find(:all, :order => "bug_id ASC").each  do |bug|
             #puts "Processing bugzilla bug #{bug.bug_id}"
@@ -396,7 +397,7 @@ module ActiveRecord
 
 
             # Additionally save the original bugzilla bug ID as custom field value.
-            issue.custom_field_values = { custom_field.id => "#{bug.id}" }
+            issue.custom_field_values = { custom_field_bug_id.id => "#{bug.id}", custom_field_qa_contact => map_user(bug.qa_contact) }
             issue.save_custom_field_values
 
             print '.'
