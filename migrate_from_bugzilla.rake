@@ -397,7 +397,8 @@ module ActiveRecord
 
 
             # Additionally save the original bugzilla bug ID as custom field value.
-            issue.custom_field_values = { custom_field_bug_id.id => "#{bug.id}", custom_field_qa_contact => map_user(bug.qa_contact) }
+            puts "{bug.qa_contact}"
+            issue.custom_field_values = { custom_field_bug_id.id => "#{bug.id}", custom_field_qa_contact.id => "{map_user(bug.qa_contact)}" }
             issue.save_custom_field_values
 
             print '.'
