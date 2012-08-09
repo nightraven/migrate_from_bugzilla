@@ -475,7 +475,7 @@ module ActiveRecord
           return if custom
           puts "Creating custom QA"
           custom = IssueCustomField.new({ :name => QA_CONTACT_FIELDNAME,
-                                          :is_required => true,
+                                          :is_required => false,
                                           :is_for_all => true,
                                           :is_filter => true,
                                           :editable => true,
