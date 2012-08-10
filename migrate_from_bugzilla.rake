@@ -538,7 +538,7 @@ module ActiveRecord
         BugzillaMigrate.migrate_users
         BugzillaMigrate.migrate_products
         BugzillaMigrate.migrate_issues
-        BugzillaMigrate..migrate_ccers
+        BugzillaMigrate.migrate_ccers
         BugzillaMigrate.migrate_attachments
         BugzillaMigrate.migrate_issue_relations
       end
