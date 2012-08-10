@@ -355,7 +355,7 @@ module ActiveRecord
               puts
               print "bugid: #{cc.bug_id} mapped #{@issue_map[cc.bug_id]}"
               
-              watcher = Watcher.new(:watchable => @issue_map[cc.bug_id], :user => User.find(map_user(cc.who)))
+              watcher = Watcher.new(:watchable => Issue.find(@issue_map[cc.bug_id]), :user => User.find(map_user(cc.who)))
               watcher.save!
             end
         end
