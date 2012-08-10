@@ -140,6 +140,10 @@ module ActiveRecord
           end
         end
 
+        class BugzillaCCers < ActiveRecord::Base
+          set_table_name :cc
+        end
+
         class BugzillaGroup < ActiveRecord::Base
           set_table_name :groups
 
@@ -344,6 +348,10 @@ module ActiveRecord
           end
         end
 
+        def self.migrate_ccers()
+          
+        end
+
         def self.migrate_issues()
           puts
           print "Migrating issues"
@@ -395,10 +403,13 @@ module ActiveRecord
               journal.save!
             end
 
+            BugzillaCCers.find_each do |cc|
+              watcher = Watcher.new(:watchable => @issue_map[cc.bug_id], :user => map_user(cc.who))
+              watcher.save!
+            end
 
             # Additionally save the original bugzilla bug ID as custom field value.
-            print "QA: #{bug.qa_contact} "
-            print "#{map_user(bug.qa_contact)}"
+            # Additionally save QA contact
             issue.custom_field_values = { custom_field_bug_id.id => "#{bug.id}", custom_field_qa_contact.id => "#{map_user(bug.qa_contact)}" }
             issue.save_custom_field_values
 
