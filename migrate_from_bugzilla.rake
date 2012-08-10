@@ -27,7 +27,6 @@ require 'pp'
 module ActiveRecord
   namespace :redmine do
     task :migrate_from_bugzilla => :environment do
-      @issue_map = {}
 
       module AssignablePk
         attr_accessor :pk
@@ -366,7 +365,7 @@ module ActiveRecord
           print "Migrating issues"
 
           # Issue.destroy_all
-          
+          @issue_map = {}
 
           custom_field_bug_id = IssueCustomField.find_by_name(BUGZILLA_ID_FIELDNAME)
           custom_field_qa_contact = IssueCustomField.find_by_name(QA_CONTACT_FIELDNAME)
