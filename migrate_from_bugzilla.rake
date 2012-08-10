@@ -404,7 +404,8 @@ module ActiveRecord
             end
 
             BugzillaCCers.find_by_sql("select * from cc").each do |cc|
-              watcher = Watcher.new(:watchable => @issue_map[cc.bug_id], :user => User.find(map_user(cc.who)))
+              print "bugid: #{cc.bug_id} mapped #{@issue_map[cc.bug_id]}"
+              #watcher = Watcher.new(:watchable => @issue_map[cc.bug_id], :user => User.find(map_user(cc.who)))
               watcher.save!
             end
 
