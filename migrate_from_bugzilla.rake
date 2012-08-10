@@ -306,6 +306,8 @@ module ActiveRecord
           print "Migrating products"
           $stdout.flush
 
+          Project.destroy_all
+
           @project_map = {}
           @category_map = {}
 
