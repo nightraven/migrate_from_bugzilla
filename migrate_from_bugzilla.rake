@@ -27,6 +27,7 @@ require 'pp'
 module ActiveRecord
   namespace :redmine do
     task :migrate_from_bugzilla => :environment do
+      @issue_map = {}
 
       module AssignablePk
         attr_accessor :pk
@@ -349,7 +350,13 @@ module ActiveRecord
         end
 
         def self.migrate_ccers()
-          
+            BugzillaCCers.find_by_sql("select * from cc").each do |cc|
+              puts
+              print "bugid: #{cc.bug_id} mapped #{@issue_map[cc.bug_id]}"
+              
+              watcher = Watcher.new(:watchable => @issue_map[cc.bug_id], :user => User.find(map_user(cc.who)))
+              watcher.save!
+            end
         end
 
         def self.migrate_issues()
@@ -357,7 +364,7 @@ module ActiveRecord
           print "Migrating issues"
 
           # Issue.destroy_all
-          @issue_map = {}
+          
 
           custom_field_bug_id = IssueCustomField.find_by_name(BUGZILLA_ID_FIELDNAME)
           custom_field_qa_contact = IssueCustomField.find_by_name(QA_CONTACT_FIELDNAME)
@@ -403,12 +410,6 @@ module ActiveRecord
               journal.save!
             end
 
-            BugzillaCCers.find_by_sql("select * from cc").each do |cc|
-              puts
-              print "bugid: #{cc.bug_id} mapped #{@issue_map[cc.bug_id]}"
-              watcher = Watcher.new(:watchable => @issue_map[cc.bug_id], :user => User.find(map_user(cc.who)))
-              watcher.save!
-            end
 
             # Additionally save the original bugzilla bug ID as custom field value.
             # Additionally save QA contact
@@ -537,6 +538,7 @@ module ActiveRecord
         BugzillaMigrate.migrate_users
         BugzillaMigrate.migrate_products
         BugzillaMigrate.migrate_issues
+        BugzillaMigrate..migrate_ccers
         BugzillaMigrate.migrate_attachments
         BugzillaMigrate.migrate_issue_relations
       end
