@@ -352,9 +352,6 @@ module ActiveRecord
 
         def self.migrate_ccers()
             BugzillaCCers.find_by_sql("select * from cc").each do |cc|
-              puts
-              print "bugid: #{cc.bug_id} mapped #{@issue_map[cc.bug_id]}"
-              
               watcher = Watcher.new(:watchable => Issue.find(@issue_map[cc.bug_id]), :user => User.find(map_user(cc.who)))
               watcher.save!
             end
