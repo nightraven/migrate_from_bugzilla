@@ -364,7 +364,7 @@ module ActiveRecord
           # Issue.destroy_all
           @issue_map = {}
 
-          custom_field_bug_id = IssueCustomField.find_by_name(BUGZILLA_ID_FIELDNAME)
+#          custom_field_bug_id = IssueCustomField.find_by_name(BUGZILLA_ID_FIELDNAME)
           custom_field_qa_contact = IssueCustomField.find_by_name(QA_CONTACT_FIELDNAME)
 
           BugzillaBug.find(:all, :order => "bug_id ASC").each  do |bug|
@@ -385,7 +385,10 @@ module ActiveRecord
 
             issue.tracker = TRACKER_BUG
             # issue.category_id = @category_map[bug.component_id]
-            issue.id = bug.bug_id
+            if Issue.find(bug.bug_id).nil?
+              issue.id = bug.bug_id
+            else
+              puts "Warning: Couldn't preserve original bug id #{bug.bug_id} (now #{issue.id})"
             issue.category_id =  @category_map[bug.component_id] unless bug.component_id.blank?
             issue.assigned_to_id = map_user(bug.assigned_to) unless bug.assigned_to.blank?
             version = Version.first(:conditions => {:project_id => @project_map[bug.product_id], :name => bug.version })
@@ -411,7 +414,7 @@ module ActiveRecord
 
             # Additionally save the original bugzilla bug ID as custom field value.
             # Additionally save QA contact
-            issue.custom_field_values = { custom_field_bug_id.id => "#{bug.id}", custom_field_qa_contact.id => "#{map_user(bug.qa_contact)}" }
+            issue.custom_field_values = { custom_field_qa_contact.id => "#{map_user(bug.qa_contact)}" }
             issue.save_custom_field_values
 
             print '.'
@@ -531,7 +534,7 @@ module ActiveRecord
 
 
         BugzillaMigrate.establish_connection db_params
-        BugzillaMigrate.create_custom_bug_id_field
+        #BugzillaMigrate.create_custom_bug_id_field
 	BugzillaMigrate.create_custom_qa_contact_field
         BugzillaMigrate.migrate_users
         BugzillaMigrate.migrate_products
