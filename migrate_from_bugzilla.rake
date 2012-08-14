@@ -364,7 +364,7 @@ module ActiveRecord
           # Issue.destroy_all
           @issue_map = {}
 
-#          custom_field_bug_id = IssueCustomField.find_by_name(BUGZILLA_ID_FIELDNAME)
+          # custom_field_bug_id = IssueCustomField.find_by_name(BUGZILLA_ID_FIELDNAME)
           custom_field_qa_contact = IssueCustomField.find_by_name(QA_CONTACT_FIELDNAME)
 
           BugzillaBug.find(:all, :order => "bug_id ASC").each  do |bug|
@@ -534,7 +534,7 @@ module ActiveRecord
 
 
         BugzillaMigrate.establish_connection db_params
-        #BugzillaMigrate.create_custom_bug_id_field
+        # BugzillaMigrate.create_custom_bug_id_field
 	BugzillaMigrate.create_custom_qa_contact_field
         BugzillaMigrate.migrate_users
         BugzillaMigrate.migrate_products
