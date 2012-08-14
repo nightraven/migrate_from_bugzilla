@@ -389,6 +389,8 @@ module ActiveRecord
               issue.id = bug.bug_id
             else
               puts "Warning: Couldn't preserve original bug id #{bug.bug_id} (now #{issue.id})"
+	    end
+
             issue.category_id =  @category_map[bug.component_id] unless bug.component_id.blank?
             issue.assigned_to_id = map_user(bug.assigned_to) unless bug.assigned_to.blank?
             version = Version.first(:conditions => {:project_id => @project_map[bug.product_id], :name => bug.version })
