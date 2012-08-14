@@ -513,7 +513,7 @@ module ActiveRecord
         end
 
         def self.create_custom_trackers
-          @trackers{}
+          @trackers = {}
           trackernames = ['adaptive', 'corrective', 'perfective', 'preventive', 'uncategorized']
           trackernames.each do |trackername|
             tracker = Tracker.new(:name => trackername)
