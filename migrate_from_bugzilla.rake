@@ -385,6 +385,7 @@ module ActiveRecord
 
             @trackers.each do |trackername, tracker|
               if bug.keywords.strip == trackername
+                puts trackername
                 issue.tracker = tracker
                 break
               end
@@ -519,10 +520,11 @@ module ActiveRecord
             print trackername
             tracker = Tracker.new(:name => trackername)
             @trackers[trackername] = tracker
-          end
-          @trackers.each do |trackername, tracker|
             tracker.save!
           end
+ #         @trackers.each do |trackername, tracker|
+  #          tracker.save!
+  #        end
         end
 
         puts
