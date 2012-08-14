@@ -518,7 +518,7 @@ module ActiveRecord
           trackernames.each do |trackername|
             tracker = Tracker.new(:name => trackername)
             tracker.save!
-            trackers[trackername] = tracker
+            @trackers[trackername] = tracker
           end
         end
 
