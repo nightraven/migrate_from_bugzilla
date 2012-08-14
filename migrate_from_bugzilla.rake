@@ -372,6 +372,7 @@ module ActiveRecord
             description = bug.descriptions.first.text.to_s
 
             issue = Issue.new(
+              :id => bug.bug_id,
               :project_id => @project_map[bug.product_id],
               :subject => bug.short_desc,
               :description => description || bug.short_desc,
