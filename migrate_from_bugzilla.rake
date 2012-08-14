@@ -383,7 +383,14 @@ module ActiveRecord
               :updated_on => bug.delta_ts
             )
 
-            issue.tracker = TRACKER_BUG
+            @trackers.each do |trackername, tracker|
+              if bug.keywords.strip == trackername
+                issue.tracker = tracker
+                break
+              end
+            end
+            # issue.tracker = TRACKER_BUG
+
             # issue.category_id = @category_map[bug.component_id]
             if !@issue_map.has_key?(bug.bug_id)
               issue.id = bug.bug_id
@@ -505,6 +512,16 @@ module ActiveRecord
           end
         end
 
+        def self.create_custom_trackers
+          @trackers{}
+          trackernames = ['adaptive', 'corrective', 'perfective', 'preventive', 'uncategorized']
+          trackernames.each do |trackername|
+            tracker = Tracker.new(:name => trackername)
+            tracker.save!
+            trackers[trackername] = tracker
+          end
+        end
+
         puts
         puts "WARNING: Your Redmine data could be corrupted during this process."
         print "Are you sure you want to continue ? [y/N] "
@@ -538,6 +555,7 @@ module ActiveRecord
         BugzillaMigrate.establish_connection db_params
         # BugzillaMigrate.create_custom_bug_id_field
 	BugzillaMigrate.create_custom_qa_contact_field
+        BugzillaMigrate.create_custom_trackers
         BugzillaMigrate.migrate_users
         BugzillaMigrate.migrate_products
         BugzillaMigrate.migrate_issues
