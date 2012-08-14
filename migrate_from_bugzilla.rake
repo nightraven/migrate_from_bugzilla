@@ -385,7 +385,7 @@ module ActiveRecord
 
             issue.tracker = TRACKER_BUG
             # issue.category_id = @category_map[bug.component_id]
-            if Issue.find(bug.bug_id).nil?
+            if !@issue_map.has_key?(bug.bug_id)
               issue.id = bug.bug_id
             else
               puts "Warning: Couldn't preserve original bug id #{bug.bug_id} (now #{issue.id})"
