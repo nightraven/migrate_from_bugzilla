@@ -74,7 +74,7 @@ module ActiveRecord
         }
         DEFAULT_PRIORITY = PRIORITY_MAPPING["P2"]
 
-        TRACKER_BUG = Tracker.find_by_position(1)
+        trackernames = ['adaptive', 'corrective', 'perfective', 'preventive', 'uncategorized']
         TRACKER_FEATURE = Tracker.find_by_position(2)
 
         reporter_role = Role.find_by_position(5)
@@ -383,10 +383,10 @@ module ActiveRecord
               :updated_on => bug.delta_ts
             )
 
+            # Assign trackers to keyword saved
             issue.tracker = @trackers['uncategorized']
             @trackers.each do |trackername, tracker|
               if bug.keywords.strip == trackername
-                puts trackername
                 issue.tracker = tracker
                 break
               end
@@ -515,16 +515,12 @@ module ActiveRecord
 
         def self.create_custom_trackers
           @trackers = {}
-          trackernames = ['adaptive', 'corrective', 'perfective', 'preventive', 'uncategorized']
           trackernames.each do |trackername|
             print trackername
             tracker = Tracker.new(:name => trackername)
             @trackers[trackername] = tracker
             tracker.save!
           end
- #         @trackers.each do |trackername, tracker|
-  #          tracker.save!
-  #        end
         end
 
         puts
