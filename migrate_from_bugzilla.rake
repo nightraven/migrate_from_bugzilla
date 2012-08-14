@@ -516,7 +516,6 @@ module ActiveRecord
         def self.create_custom_trackers
           @trackers = {}
           trackernames.each do |trackername|
-            print trackername
             tracker = Tracker.new(:name => trackername)
             @trackers[trackername] = tracker
             tracker.save!
