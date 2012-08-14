@@ -372,7 +372,6 @@ module ActiveRecord
             description = bug.descriptions.first.text.to_s
 
             issue = Issue.new(
-              :id => bug.bug_id,
               :project_id => @project_map[bug.product_id],
               :subject => bug.short_desc,
               :description => description || bug.short_desc,
@@ -386,7 +385,7 @@ module ActiveRecord
 
             issue.tracker = TRACKER_BUG
             # issue.category_id = @category_map[bug.component_id]
-
+            issue.id = bug.bug_id
             issue.category_id =  @category_map[bug.component_id] unless bug.component_id.blank?
             issue.assigned_to_id = map_user(bug.assigned_to) unless bug.assigned_to.blank?
             version = Version.first(:conditions => {:project_id => @project_map[bug.product_id], :name => bug.version })
