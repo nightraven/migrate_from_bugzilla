@@ -383,6 +383,7 @@ module ActiveRecord
               :updated_on => bug.delta_ts
             )
 
+            issue.tracker = @trackers['uncategorized']
             @trackers.each do |trackername, tracker|
               if bug.keywords.strip == trackername
                 puts trackername
@@ -390,7 +391,6 @@ module ActiveRecord
                 break
               end
             end
-            # issue.tracker = TRACKER_BUG
 
             # issue.category_id = @category_map[bug.component_id]
             if !@issue_map.has_key?(bug.bug_id)
