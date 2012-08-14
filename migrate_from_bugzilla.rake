@@ -516,8 +516,8 @@ module ActiveRecord
           @trackers = {}
           trackernames = ['adaptive', 'corrective', 'perfective', 'preventive', 'uncategorized']
           trackernames.each do |trackername|
+            print trackername
             tracker = Tracker.new(:name => trackername)
-            tracker.save!
             @trackers[trackername] = tracker
           end
         end
