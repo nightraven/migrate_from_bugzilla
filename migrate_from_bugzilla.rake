@@ -520,6 +520,9 @@ module ActiveRecord
             tracker = Tracker.new(:name => trackername)
             @trackers[trackername] = tracker
           end
+          @trackers.each do |trackername, tracker|
+            tracker.save!
+          end
         end
 
         puts
