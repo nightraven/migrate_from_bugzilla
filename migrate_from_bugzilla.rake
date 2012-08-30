@@ -74,7 +74,7 @@ module ActiveRecord
         }
         DEFAULT_PRIORITY = PRIORITY_MAPPING["P2"]
 
-        trackernames = ['adaptive', 'corrective', 'perfective', 'preventive', 'uncategorized']
+        @trackernames = ['adaptive', 'corrective', 'perfective', 'preventive', 'uncategorized']
         TRACKER_FEATURE = Tracker.find_by_position(2)
 
         reporter_role = Role.find_by_position(5)
@@ -305,7 +305,7 @@ module ActiveRecord
           print "Migrating products"
           $stdout.flush
 
-          Project.destroy_all
+          #Project.destroy_all
 
           @project_map = {}
           @category_map = {}
@@ -352,8 +352,10 @@ module ActiveRecord
 
         def self.migrate_ccers()
             BugzillaCCers.find_by_sql("select * from cc").each do |cc|
-              watcher = Watcher.new(:watchable => Issue.find(@issue_map[cc.bug_id]), :user => User.find(map_user(cc.who)))
-              watcher.save!
+	      if !@issue_map[cc.bug_id].nil?
+	         watcher = Watcher.new(:watchable => Issue.find(@issue_map[cc.bug_id]), :user => User.find(map_user(cc.who)))
+              	 watcher.save!
+	      end
             end
         end
 
@@ -368,6 +370,7 @@ module ActiveRecord
           custom_field_qa_contact = IssueCustomField.find_by_name(QA_CONTACT_FIELDNAME)
 
           BugzillaBug.find(:all, :order => "bug_id ASC").each  do |bug|
+	    if !@project_map[bug.product_id].nil?
             #puts "Processing bugzilla bug #{bug.bug_id}"
             description = bug.descriptions.first.text.to_s
 
@@ -393,10 +396,11 @@ module ActiveRecord
             end
 
             # issue.category_id = @category_map[bug.component_id]
-            if !@issue_map.has_key?(bug.bug_id)
+            if Issue.find_by_id(bug.bug_id).nil?
               issue.id = bug.bug_id
             else
-              puts "Warning: Couldn't preserve original bug id #{bug.bug_id} (now #{issue.id})"
+              puts "Warning: Couldn't preserve original bug id #{bug.bug_id}, now "
+	      bug_id_altered = 1
 	    end
 
             issue.category_id =  @category_map[bug.component_id] unless bug.component_id.blank?
@@ -405,7 +409,9 @@ module ActiveRecord
             issue.fixed_version = version
 
             issue.save!
-            #puts "Redmine issue number is #{issue.id}"
+	    if bug_id_altered
+	       puts "#{issue.id}"
+	    end
             @issue_map[bug.bug_id] = issue.id
 
 
@@ -429,6 +435,7 @@ module ActiveRecord
 
             print '.'
             $stdout.flush
+	    end
           end
         end
 
@@ -437,14 +444,16 @@ module ActiveRecord
           print "Migrating attachments"
           BugzillaAttachment.find_each() do |attachment|
             next if attachment.attach_data.nil?
-            a = Attachment.new :created_on => attachment.creation_ts
-            a.file = attachment
-            a.author = User.find(map_user(attachment.submitter_id)) || User.first
-            a.container = Issue.find(@issue_map[attachment.bug_id])
-            a.save
+	    if !@issue_map[attachment.bug_id].nil?
+              a = Attachment.new :created_on => attachment.creation_ts
+              a.file = attachment
+              a.author = User.find(map_user(attachment.submitter_id)) || User.first
+              a.container = Issue.find(@issue_map[attachment.bug_id])
+              a.save
 
-            print '.'
-            $stdout.flush
+              print '.'
+              $stdout.flush
+            end
           end
         end
 
@@ -452,13 +461,15 @@ module ActiveRecord
           puts
           print "Migrating issue relations"
           BugzillaDependency.find_by_sql("select blocked, dependson from dependencies").each do |dep|
-            rel = IssueRelation.new
-            rel.issue_from_id = @issue_map[dep.blocked]
-            rel.issue_to_id = @issue_map[dep.dependson]
-            rel.relation_type = "blocks"
-            rel.save
-            print '.'
-            $stdout.flush
+            if !@issue_map[dep.blocked].nil? && !@issue_map[dep.dependson].nil?
+              rel = IssueRelation.new
+              rel.issue_from_id = @issue_map[dep.blocked]
+              rel.issue_to_id = @issue_map[dep.dependson]
+              rel.relation_type = "blocks"
+              rel.save
+              print '.'
+              $stdout.flush
+            end
           end
 
           BugzillaDuplicate.find_by_sql("select dupe_of, dupe from duplicates").each do |dup|
@@ -513,12 +524,15 @@ module ActiveRecord
           end
         end
 
-        def self.create_custom_trackers
+        def self.find_or_create_custom_trackers
           @trackers = {}
-          trackernames.each do |trackername|
-            tracker = Tracker.new(:name => trackername)
+          @trackernames.each do |trackername|
+            tracker = Tracker.find_by_name(trackername)
+            if tracker.nil?
+              tracker = Tracker.new(:name => trackername)
+              tracker.save!
+            end
             @trackers[trackername] = tracker
-            tracker.save!
           end
         end
 
@@ -555,7 +569,7 @@ module ActiveRecord
         BugzillaMigrate.establish_connection db_params
         # BugzillaMigrate.create_custom_bug_id_field
 	BugzillaMigrate.create_custom_qa_contact_field
-        BugzillaMigrate.create_custom_trackers
+        BugzillaMigrate.find_or_create_custom_trackers
         BugzillaMigrate.migrate_users
         BugzillaMigrate.migrate_products
         BugzillaMigrate.migrate_issues
