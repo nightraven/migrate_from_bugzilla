@@ -144,6 +144,10 @@ module ActiveRecord
           set_table_name :cc
         end
 
+        class BugzillaKeywords < ActiveRecord::Base
+          set_table_name :keywords
+        end
+
         class BugzillaGroup < ActiveRecord::Base
           set_table_name :groups
 
@@ -359,6 +363,21 @@ module ActiveRecord
             end
         end
 
+        def self.migrate_keywords_by_table() 
+          BugzillaKeywords.find_by_sql("select * from keywords").each do |keyword|
+	    issue = @issue_map[keyword.bug_id]
+            if !issue.nil?
+              issue = Issue.find(issue)
+              @trackers.each do |trackername, tracker|
+                if keyword.keywordid.strip == trackername
+                  issue.tracker = tracker
+                  issue.save!
+                  break
+                end
+              end
+            end
+          end
+
         def self.migrate_issues()
           puts
           print "Migrating issues"
@@ -388,12 +407,12 @@ module ActiveRecord
 
             # Assign trackers to keyword saved
             issue.tracker = @trackers['uncategorized']
-            @trackers.each do |trackername, tracker|
-              if bug.keywords.strip == trackername
-                issue.tracker = tracker
-                break
-              end
-            end
+            # @trackers.each do |trackername, tracker|
+            #   if bug.keywords.strip == trackername
+            #     issue.tracker = tracker
+            #     break
+            #   end
+            # end
 
             # issue.category_id = @category_map[bug.component_id]
             if Issue.find_by_id(bug.bug_id).nil?
@@ -573,6 +592,7 @@ module ActiveRecord
         BugzillaMigrate.migrate_users
         BugzillaMigrate.migrate_products
         BugzillaMigrate.migrate_issues
+        BugzillaMigrate.migrate_keywords_by_table
         BugzillaMigrate.migrate_ccers
         BugzillaMigrate.migrate_attachments
         BugzillaMigrate.migrate_issue_relations
