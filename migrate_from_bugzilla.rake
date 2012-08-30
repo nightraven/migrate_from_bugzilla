@@ -568,9 +568,9 @@ module ActiveRecord
 
 
         BugzillaMigrate.establish_connection db_params
+	BugzillaMigrate.find_or_create_custom_trackers
         # BugzillaMigrate.create_custom_bug_id_field
 	BugzillaMigrate.create_custom_qa_contact_field
-        BugzillaMigrate.find_or_create_custom_trackers
         BugzillaMigrate.migrate_users
         BugzillaMigrate.migrate_products
         BugzillaMigrate.migrate_issues
