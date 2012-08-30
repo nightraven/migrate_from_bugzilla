@@ -360,29 +360,31 @@ module ActiveRecord
         end
 
         def self.migrate_ccers()
-            BugzillaCCers.find_by_sql("select * from cc").each do |cc|
-	      if !@issue_map[cc.bug_id].nil?
-	         watcher = Watcher.new(:watchable => Issue.find(@issue_map[cc.bug_id]), :user => User.find(map_user(cc.who)))
-              	 watcher.save!
-	      end
+          puts
+          print "Migrationg CCers"
+          BugzillaCCers.find_by_sql("select * from cc").each do |cc|
+            if !@issue_map[cc.bug_id].nil?
+              watcher = Watcher.new(:watchable => Issue.find(@issue_map[cc.bug_id]), :user => User.find(map_user(cc.who)))
+              watcher.save!
             end
+          end
         end
 
         def self.migrate_keywords_by_table() 
+          puts
+          print "Migrating keyword table"
           keyworddefs = {}
           BugzillaKeywordDefs.find_each do |keyworddef|
             keyworddefs[keyworddef.id] = keyworddef.name
             puts "id #{keyworddef.id} name #{keyworddef.name} name (array) {keyworddefs[keyworddef.id]}"
           end
 
-          BugzillaKeywords.find_by_sql("select * from keywords").each do |keyword|
+          BugzillaKeywords.find_each do |keyword|
             if !@issue_map[keyword.bug_id].nil?
               issue = @issue_map[keyword.bug_id]
               issue = Issue.find(issue)
               @trackers.each do |trackername, tracker|
-                #puts "id: #{keyword.keywordid} search: #{keyworddefs[keyword.keywordid]} found: #{trackername}"
                 if keyworddefs[keyword.keywordid] == trackername
-                  puts "yuhe: #{keyworddefs[keyword.keywordid]} == #{trackername}"
                   issue.tracker = tracker
                   issue.save!
                   break
