@@ -367,6 +367,7 @@ module ActiveRecord
           keyworddefs = {}
           BugzillaKeywords.find_by_sql("select * from keyworddefs").each do |keyworddef|
             keyworddefs[keyworddef.id] = keyworddef.name.strip
+          end
 
           BugzillaKeywords.find_by_sql("select * from keywords").each do |keyword|
 	    issue = @issue_map[keyword.bug_id]
