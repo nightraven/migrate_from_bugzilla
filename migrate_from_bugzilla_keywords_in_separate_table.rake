@@ -599,7 +599,7 @@ module ActiveRecord
         BugzillaMigrate.find_or_create_custom_trackers
         BugzillaMigrate.migrate_users
         BugzillaMigrate.migrate_products
-        #BugzillaMigrate.migrate_issues
+        BugzillaMigrate.migrate_issues
         BugzillaMigrate.migrate_keywords_by_table
         BugzillaMigrate.migrate_ccers
         BugzillaMigrate.migrate_attachments
