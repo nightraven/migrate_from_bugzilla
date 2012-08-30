@@ -371,8 +371,8 @@ module ActiveRecord
           end
 
           BugzillaKeywords.find_by_sql("select * from keywords").each do |keyword|
-	    issue = @issue_map[keyword.bug_id]
-            if !issue.nil?
+            if !@issue_map[keyword.bug_id].nil?
+              issue = @issue_map[keyword.bug_id]
               issue = Issue.find(issue)
               @trackers.each do |trackername, tracker|
                 puts "id: #{keyword.keywordif} search: #{keyworddefs[keyword.keywordif]} found: #{trackername}"
