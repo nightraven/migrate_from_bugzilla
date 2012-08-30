@@ -410,7 +410,7 @@ module ActiveRecord
 
             issue.save!
 	    if bug_id_altered
-	       puts "#{issue.id}"
+	       print "#{issue.id}"
 	    end
             @issue_map[bug.bug_id] = issue.id
 
