@@ -377,6 +377,7 @@ module ActiveRecord
               end
             end
           end
+        end
 
         def self.migrate_issues()
           puts
