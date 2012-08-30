@@ -148,6 +148,11 @@ module ActiveRecord
           set_table_name :keywords
         end
 
+        class BugzillaKeywords < ActiveRecord::Base
+          set_table_name :keyworddefs
+          set_primary_key :id
+        end
+
         class BugzillaGroup < ActiveRecord::Base
           set_table_name :groups
 
@@ -364,9 +369,9 @@ module ActiveRecord
         end
 
         def self.migrate_keywords_by_table() 
-          @keyworddefs = {}
-          BugzillaKeywords.find_by_sql("select * from keyworddefs").each do |keyworddef|
-            @keyworddefs[keyworddef.id] = keyworddef.name
+          keyworddefs = {}
+          BugzillaKeywordDefs.find_each do |keyworddef|
+            keyworddefs[keyworddef.id] = keyworddef.name
             puts "id #{keyworddef.id} name #{keyworddef.name} name (array) {@keyworddefs[keyworddef.id]}"
           end
 
@@ -375,7 +380,7 @@ module ActiveRecord
               issue = @issue_map[keyword.bug_id]
               issue = Issue.find(issue)
               @trackers.each do |trackername, tracker|
-                #puts "id: #{keyword.keywordid} search: #{@keyworddefs[keyword.keywordid]} found: #{trackername}"
+                #puts "id: #{keyword.keywordid} search: #{keyworddefs[keyword.keywordid]} found: #{trackername}"
                 if @keyworddefs[keyword.keywordid] == trackername
                   puts "yuhe: #{@keyworddefs[keyword.keywordid]} == #{trackername}"
                   issue.tracker = tracker
