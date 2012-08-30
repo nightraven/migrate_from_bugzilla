@@ -26,7 +26,7 @@ require 'pp'
 
 module ActiveRecord
   namespace :redmine do
-    task :migrate_from_bugzilla => :environment do
+    task :migrate_from_bugzilla_keywords_in_separate_table => :environment do
 
       module AssignablePk
         attr_accessor :pk
