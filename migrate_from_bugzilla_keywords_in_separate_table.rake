@@ -148,7 +148,7 @@ module ActiveRecord
           set_table_name :keywords
         end
 
-        class BugzillaKeywords < ActiveRecord::Base
+        class BugzillaKeywordDefs < ActiveRecord::Base
           set_table_name :keyworddefs
           set_primary_key :id
         end
@@ -372,7 +372,7 @@ module ActiveRecord
           keyworddefs = {}
           BugzillaKeywordDefs.find_each do |keyworddef|
             keyworddefs[keyworddef.id] = keyworddef.name
-            puts "id #{keyworddef.id} name #{keyworddef.name} name (array) {@keyworddefs[keyworddef.id]}"
+            puts "id #{keyworddef.id} name #{keyworddef.name} name (array) {keyworddefs[keyworddef.id]}"
           end
 
           BugzillaKeywords.find_by_sql("select * from keywords").each do |keyword|
@@ -381,8 +381,8 @@ module ActiveRecord
               issue = Issue.find(issue)
               @trackers.each do |trackername, tracker|
                 #puts "id: #{keyword.keywordid} search: #{keyworddefs[keyword.keywordid]} found: #{trackername}"
-                if @keyworddefs[keyword.keywordid] == trackername
-                  puts "yuhe: #{@keyworddefs[keyword.keywordid]} == #{trackername}"
+                if keyworddefs[keyword.keywordid] == trackername
+                  puts "yuhe: #{keyworddefs[keyword.keywordid]} == #{trackername}"
                   issue.tracker = tracker
                   issue.save!
                   break
