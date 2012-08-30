@@ -375,7 +375,7 @@ module ActiveRecord
               issue = @issue_map[keyword.bug_id]
               issue = Issue.find(issue)
               @trackers.each do |trackername, tracker|
-                puts "id: #{keyword.keywordif} search: #{keyworddefs[keyword.keywordif]} found: #{trackername}"
+                puts "id: #{keyword.keywordid} search: #{keyworddefs[keyword.keywordid]} found: #{trackername}"
                 if keyworddefs[keyword.keywordid] == trackername
                   issue.tracker = tracker
                   issue.save!
