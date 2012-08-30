@@ -364,9 +364,9 @@ module ActiveRecord
         end
 
         def self.migrate_keywords_by_table() 
-          keyworddefs = {}
+          @keyworddefs = {}
           BugzillaKeywords.find_by_sql("select * from keyworddefs").each do |keyworddef|
-            keyworddefs[keyworddef.id] = keyworddef.name.strip
+            @keyworddefs[keyworddef.id] = keyworddef.name.strip
             print keyworddef.name
           end
 
@@ -375,8 +375,9 @@ module ActiveRecord
               issue = @issue_map[keyword.bug_id]
               issue = Issue.find(issue)
               @trackers.each do |trackername, tracker|
-                puts "id: #{keyword.keywordid} search: #{keyworddefs[keyword.keywordid]} found: #{trackername}"
-                if keyworddefs[keyword.keywordid] == trackername
+                puts "id: #{keyword.keywordid} search: #{@keyworddefs[keyword.keywordid]} found: #{trackername}"
+                if @keyworddefs[keyword.keywordid] == trackername
+                  puts "yuhe: #{@keyworddefs[keyword.keywordid]} == #{trackername}"
                   issue.tracker = tracker
                   issue.save!
                   break
