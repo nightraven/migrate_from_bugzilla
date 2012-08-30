@@ -399,7 +399,8 @@ module ActiveRecord
             if Issue.find_by_id(bug.bug_id).nil?
               issue.id = bug.bug_id
             else
-              puts "Warning: Couldn't preserve original bug id #{bug.bug_id}, now "
+              puts 
+              print "Warning: Couldn't preserve original bug id #{bug.bug_id}, now "
 	      bug_id_altered = 1
 	    end
 
