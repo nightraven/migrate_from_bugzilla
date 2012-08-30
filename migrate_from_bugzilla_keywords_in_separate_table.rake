@@ -361,11 +361,12 @@ module ActiveRecord
 
         def self.migrate_ccers()
           puts
-          print "Migrationg CCers"
+          print "Migrating CCers"
           BugzillaCCers.find_by_sql("select * from cc").each do |cc|
             if !@issue_map[cc.bug_id].nil?
               watcher = Watcher.new(:watchable => Issue.find(@issue_map[cc.bug_id]), :user => User.find(map_user(cc.who)))
               watcher.save!
+              print '.'
             end
           end
         end
@@ -376,7 +377,6 @@ module ActiveRecord
           keyworddefs = {}
           BugzillaKeywordDefs.find_each do |keyworddef|
             keyworddefs[keyworddef.id] = keyworddef.name
-            puts "id #{keyworddef.id} name #{keyworddef.name} name (array) {keyworddefs[keyworddef.id]}"
           end
 
           BugzillaKeywords.find_by_sql("select * from keywords").each do |keyword|
@@ -387,6 +387,7 @@ module ActiveRecord
                 if keyworddefs[keyword.keywordid] == trackername
                   issue.tracker = tracker
                   issue.save!
+                  print '.'
                   break
                 end
               end
@@ -423,12 +424,6 @@ module ActiveRecord
 
             # Assign trackers to keyword saved
             issue.tracker = @trackers['uncategorized']
-            # @trackers.each do |trackername, tracker|
-            #   if bug.keywords.strip == trackername
-            #     issue.tracker = tracker
-            #     break
-            #   end
-            # end
 
             # issue.category_id = @category_map[bug.component_id]
             if Issue.find_by_id(bug.bug_id).nil?
@@ -446,7 +441,8 @@ module ActiveRecord
 
             issue.save!
 	    if bug_id_altered
-	       print "#{issue.id}"
+              print "#{issue.id}"
+              puts ""
 	    end
             @issue_map[bug.bug_id] = issue.id
 
