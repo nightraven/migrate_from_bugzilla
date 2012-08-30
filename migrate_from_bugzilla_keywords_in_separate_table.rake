@@ -374,12 +374,12 @@ module ActiveRecord
           puts
           print "Migrating keyword table"
           keyworddefs = {}
-          BugzillaKeywordDefs.find_by_sql("select * from keywords").each do |keyworddef|
+          BugzillaKeywordDefs.find_each do |keyworddef|
             keyworddefs[keyworddef.id] = keyworddef.name
             puts "id #{keyworddef.id} name #{keyworddef.name} name (array) {keyworddefs[keyworddef.id]}"
           end
 
-          BugzillaKeywords.find_each do |keyword|
+          BugzillaKeywords.find_by_sql("select * from keywords").each do |keyword|
             if !@issue_map[keyword.bug_id].nil?
               issue = @issue_map[keyword.bug_id]
               issue = Issue.find(issue)
