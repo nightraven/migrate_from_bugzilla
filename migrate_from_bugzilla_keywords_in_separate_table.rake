@@ -367,6 +367,7 @@ module ActiveRecord
           keyworddefs = {}
           BugzillaKeywords.find_by_sql("select * from keyworddefs").each do |keyworddef|
             keyworddefs[keyworddef.id] = keyworddef.name.strip
+            print keyworddef.name
           end
 
           BugzillaKeywords.find_by_sql("select * from keywords").each do |keyword|
@@ -597,7 +598,7 @@ module ActiveRecord
         BugzillaMigrate.find_or_create_custom_trackers
         BugzillaMigrate.migrate_users
         BugzillaMigrate.migrate_products
-        BugzillaMigrate.migrate_issues
+        #BugzillaMigrate.migrate_issues
         BugzillaMigrate.migrate_keywords_by_table
         BugzillaMigrate.migrate_ccers
         BugzillaMigrate.migrate_attachments
