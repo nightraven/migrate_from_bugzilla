@@ -104,6 +104,7 @@ module ActiveRecord
 
         BUGZILLA_ID_FIELDNAME = "Bugzilla-Id"
         QA_CONTACT_FIELDNAME = "QA-Contact"
+	QA_CONTACT_SECOND_LEVEL_FIELDNAME = "QA-Contact (2nd level)"
 
         class BugzillaProfile < ActiveRecord::Base
           set_table_name :profiles
@@ -359,6 +360,30 @@ module ActiveRecord
             end
         end
 
+        def self.migrate_keywords_by_table() 
+          puts
+          print "Migrating keyword table"
+          keyworddefs = {}
+          BugzillaKeywordDefs.find_each do |keyworddef|
+            keyworddefs[keyworddef.id] = keyworddef.name
+          end
+
+          BugzillaKeywords.find_by_sql("select * from keywords").each do |keyword|
+            if !@issue_map[keyword.bug_id].nil?
+              issue = @issue_map[keyword.bug_id]
+              issue = Issue.find(issue)
+              @trackers.each do |trackername, tracker|
+                if keyworddefs[keyword.keywordid] == trackername
+                  issue.tracker = tracker
+                  issue.save!
+                  print '.'
+                  break
+                end
+              end
+            end
+          end
+        end
+
         def self.migrate_issues()
           puts
           print "Migrating issues"
@@ -388,11 +413,13 @@ module ActiveRecord
 
             # Assign trackers to keyword saved
             issue.tracker = @trackers['uncategorized']
-            @trackers.each do |trackername, tracker|
-              if bug.keywords.strip == trackername
-                issue.tracker = tracker
-                break
-              end
+            if !migrate_keywords_by_table
+              @trackers.each do |trackername, tracker|
+                  if bug.keywords.strip == trackername
+                    issue.tracker = tracker
+                    break
+                  end
+                end
             end
 
             # issue.category_id = @category_map[bug.component_id]
@@ -507,11 +534,11 @@ module ActiveRecord
            end
         end
 
-        def self.create_custom_qa_contact_field
-          custom = IssueCustomField.find_by_name(QA_CONTACT_FIELDNAME)
+        def self.create_custom_qa_contact_field(fieldname)
+          custom = IssueCustomField.find_by_name(fieldname)
           return if custom
           puts "Creating custom QA"
-          custom = IssueCustomField.new({ :name => QA_CONTACT_FIELDNAME,
+          custom = IssueCustomField.new({ :name => fieldname,
                                           :is_required => false,
                                           :is_for_all => true,
                                           :is_filter => true,
@@ -560,6 +587,14 @@ module ActiveRecord
             db_params[param] = value unless value.blank?
         end
 
+	puts
+	puts "Is this data from bugzilla version 4 or above ? [y/N] "
+	if STDIN.gets.match(/^y$/i)
+	   migrate_keywords_by_table = false
+	else
+	   migrate_keywords_by_table = true
+	end
+
         # Make sure bugs can refer bugs in other projects
         Setting.cross_project_issue_relations = 1 if Setting.respond_to? 'cross_project_issue_relations'
 
@@ -570,10 +605,12 @@ module ActiveRecord
         BugzillaMigrate.establish_connection db_params
 	BugzillaMigrate.find_or_create_custom_trackers
         # BugzillaMigrate.create_custom_bug_id_field
-	BugzillaMigrate.create_custom_qa_contact_field
+        BugzillaMigrate.create_custom_qa_contact_field(QA_CONTACT_FIELDNAME)
+        BugzillaMigrate.create_custom_qa_contact_field(QA_CONTACT_SECOND_LEVEL_FIELDNAME)
         BugzillaMigrate.migrate_users
         BugzillaMigrate.migrate_products
         BugzillaMigrate.migrate_issues
+        BugzillaMigrate.migrate_keywords_by_table if migrate_keywords_by_table
         BugzillaMigrate.migrate_ccers
         BugzillaMigrate.migrate_attachments
         BugzillaMigrate.migrate_issue_relations
