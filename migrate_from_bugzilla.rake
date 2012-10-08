@@ -245,6 +245,14 @@ module ActiveRecord
           set_table_name :attach_data
         end
 
+        class BugzillaKeywords < ActiveRecord::Base
+          set_table_name :keywords
+        end
+ 
+        class BugzillaKeywordDefs < ActiveRecord::Base
+          set_table_name :keyworddefs
+          set_primary_key :id
+        end
 
         def self.establish_connection(params)
           constants.each do |const|
@@ -589,9 +597,9 @@ module ActiveRecord
 
 	print "Is this data from bugzilla version 4 or above ? [y/N] "
 	if STDIN.gets.match(/^y$/i)
-	   @run_migrate_keywords_by_table = false
-	else
 	   @run_migrate_keywords_by_table = true
+	else
+	   @run_migrate_keywords_by_table = false
 	end
 
         # Make sure bugs can refer bugs in other projects
