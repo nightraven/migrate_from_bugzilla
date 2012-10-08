@@ -413,7 +413,7 @@ module ActiveRecord
 
             # Assign trackers to keyword saved
             issue.tracker = @trackers['uncategorized']
-            if !self.run_migrate_keywords_by_table
+            if !@run_migrate_keywords_by_table
               @trackers.each do |trackername, tracker|
                   if bug.keywords.strip == trackername
                     issue.tracker = tracker
@@ -589,9 +589,9 @@ module ActiveRecord
 
 	print "Is this data from bugzilla version 4 or above ? [y/N] "
 	if STDIN.gets.match(/^y$/i)
-	   self.run_migrate_keywords_by_table = false
+	   @run_migrate_keywords_by_table = false
 	else
-	   self.run_migrate_keywords_by_table = true
+	   @run_migrate_keywords_by_table = true
 	end
 
         # Make sure bugs can refer bugs in other projects
@@ -609,7 +609,7 @@ module ActiveRecord
         BugzillaMigrate.migrate_users
         BugzillaMigrate.migrate_products
         BugzillaMigrate.migrate_issues
-        BugzillaMigrate.migrate_keywords_by_table if self.run_migrate_keywords_by_table
+        BugzillaMigrate.migrate_keywords_by_table if @run_migrate_keywords_by_table
         BugzillaMigrate.migrate_ccers
         BugzillaMigrate.migrate_attachments
         BugzillaMigrate.migrate_issue_relations
