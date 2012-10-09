@@ -61,7 +61,7 @@ module ActiveRecord
           "VERIFIED" => DEFAULT_STATUS,
           "ASSIGNED" => assigned_status,
           "REOPENED" => red_status,
-          "RESOLVED" => yellow_status,
+          "RESOLVED" => yellow_status
         }
 
         priorities = IssuePriority.all(:order => 'id')
@@ -408,12 +408,17 @@ module ActiveRecord
             description = bug.descriptions.first.text.to_s
 
             # We also use the resolution to determine the new status
-            bug_mapped_status = STATUS_MAPPING[bug.bug_status] 
+            bug_mapped_status = STATUS_MAPPING[bug.bug_status]
+	    print "before if: "
+	    print bug_mapped_status + " ; "
+	    print "orig : " bug.bug_status + " ; "
             if !bug_mapped_status 
               bug_mapped_status = DISCARDED_STATUS
               bug_mapped_status = GREEN_STATUS if bug.resolution == "FIXED"
             end
-            print bug_mapped_status  
+            print "after if: " + bug_mapped_status + " ; "
+	    puts ""
+  
          
             issue = Issue.new(
               :project_id => @project_map[bug.product_id],
