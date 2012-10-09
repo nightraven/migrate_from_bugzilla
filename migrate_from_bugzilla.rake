@@ -50,9 +50,9 @@ module ActiveRecord
         organge_status = IssueStatus.find_by_position(8)
         red_status = IssueStatus.find_by_position(9)
         yellow_status = IssueStatus.find_by_position(10)
-        green_status = IssueStatus.find_by_position(11)
+        GREEN_STATUS = IssueStatus.find_by_position(11)
         released_status = IssueStatus.find_by_position(12)
-        discarded_status = IssueStatus.find_by_position(13)
+        DISCARDED_STATUS = IssueStatus.find_by_position(13)
 
      
      STATUS_MAPPING = {
@@ -410,8 +410,8 @@ module ActiveRecord
             # We also use the resolution to determine the new status
             bug_mapped_status = STATUS_MAPPING[bug.bug_status] 
             if !bug_mapped_status 
-              bug_mapped_status = BugzillaMigrate::discarded_status
-              bug_mapped_status = BugzillaMigrate::green_status if bug.resolution == "FIXED"
+              bug_mapped_status = DISCARDED_STATUS
+              bug_mapped_status = GREEN_STATUS if bug.resolution == "FIXED"
             end
               
          
