@@ -411,7 +411,7 @@ module ActiveRecord
             bug_mapped_status = STATUS_MAPPING[bug.bug_status]
             if !bug_mapped_status 
               bug_mapped_status = DISCARDED_STATUS
-              bug_mapped_status = RELEASES_STATUS if bug.resolution == "FIXED"
+              bug_mapped_status = RELEASED_STATUS if bug.resolution == "FIXED"
             end
   
          
