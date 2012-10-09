@@ -410,7 +410,7 @@ module ActiveRecord
             # We also use the resolution to determine the new status
             bug_mapped_status = STATUS_MAPPING[bug.bug_status]
 	    print "before if: "
-	    print bug_mapped_status + " ; "
+	    print "" + bug_mapped_status + " ; "
 	    print "orig : " + bug.bug_status + " ; "
             if !bug_mapped_status 
               bug_mapped_status = DISCARDED_STATUS
