@@ -45,20 +45,20 @@ module ActiveRecord
       register_for_assigned_pk([User, Project, Issue, IssueCategory, Attachment, Version])
 
       module BugzillaMigrate
-        DEFAULT_STATUS = IssueStatus.default
+        @DEFAULT_STATUS = IssueStatus.default
         assigned_status = IssueStatus.find_by_position(7)
         organge_status = IssueStatus.find_by_position(8)
         red_status = IssueStatus.find_by_position(9)
         yellow_status = IssueStatus.find_by_position(10)
-        GREEN_STATUS = IssueStatus.find_by_position(11)
+        @GREEN_STATUS = IssueStatus.find_by_position(11)
         released_status = IssueStatus.find_by_position(12)
-        DISCARDED_STATUS = IssueStatus.find_by_position(13)
+        @DISCARDED_STATUS = IssueStatus.find_by_position(13)
 
      
-     STATUS_MAPPING = {
-          "UNCONFIRMED" => DEFAULT_STATUS,
-          "NEW" => DEFAULT_STATUS,
-          "VERIFIED" => DEFAULT_STATUS,
+     @STATUS_MAPPING = {
+          "UNCONFIRMED" => @DEFAULT_STATUS,
+          "NEW" => @DEFAULT_STATUS,
+          "VERIFIED" => @DEFAULT_STATUS,
           "ASSIGNED" => assigned_status,
           "REOPENED" => red_status,
           "RESOLVED" => yellow_status
@@ -408,12 +408,12 @@ module ActiveRecord
             description = bug.descriptions.first.text.to_s
 
             # We also use the resolution to determine the new status
-            bug_mapped_status = STATUS_MAPPING[bug.bug_status]
+            bug_mapped_status = @STATUS_MAPPING[bug.bug_status]
 	    print "before if: "
 	    print "orig : " + bug.bug_status + " ; "
             if !bug_mapped_status 
-              bug_mapped_status = DISCARDED_STATUS
-              bug_mapped_status = GREEN_STATUS if bug.resolution == "FIXED"
+              bug_mapped_status = @DISCARDED_STATUS
+              bug_mapped_status = @GREEN_STATUS if bug.resolution == "FIXED"
             end
             print "after if: " + bug_mapped_status + " ; "
 	    puts ""
