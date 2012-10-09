@@ -77,10 +77,10 @@ module ActiveRecord
         @trackernames = ['adaptive', 'corrective', 'perfective', 'preventive', 'uncategorized']
         TRACKER_FEATURE = Tracker.find_by_position(2)
 
-        reporter_role = Role.find_by_position(5)
-        developer_role = Role.find_by_position(4)
+#        reporter_role = Role.find_by_position(5)
+#        developer_role = Role.find_by_position(4)
         manager_role = Role.find_by_position(3)
-        DEFAULT_ROLE = reporter_role
+        DEFAULT_ROLE = manager_role
 
         CUSTOM_FIELD_TYPE_MAPPING = {
           0 => 'string', # String
