@@ -46,19 +46,22 @@ module ActiveRecord
 
       module BugzillaMigrate
         DEFAULT_STATUS = IssueStatus.default
-        CLOSED_STATUS = IssueStatus.find :first, :conditions => { :is_closed => true }
-        assigned_status = IssueStatus.find_by_position(2)
-        resolved_status = IssueStatus.find_by_position(3)
-        feedback_status = IssueStatus.find_by_position(4)
+        assigned_status = IssueStatus.find_by_position(7)
+        organge_status = IssueStatus.find_by_position(8)
+        red_status = IssueStatus.find_by_position(9)
+        yellow_status = IssueStatus.find_by_position(10)
+        green_status = IssueStatus.find_by_position(11)
+        released_status = IssueStatus.find_by_position(12)
+        discarded_status = IssueStatus.find_by_position(13)
 
-        STATUS_MAPPING = {
+     
+     STATUS_MAPPING = {
           "UNCONFIRMED" => DEFAULT_STATUS,
           "NEW" => DEFAULT_STATUS,
           "VERIFIED" => DEFAULT_STATUS,
           "ASSIGNED" => assigned_status,
-          "REOPENED" => assigned_status,
-          "RESOLVED" => resolved_status,
-          "CLOSED" => CLOSED_STATUS
+          "REOPENED" => red_status,
+          "RESOLVED" => yellow_status,
         }
         # actually close resolved issues
         resolved_status.is_closed = true
@@ -407,13 +410,21 @@ module ActiveRecord
             #puts "Processing bugzilla bug #{bug.bug_id}"
             description = bug.descriptions.first.text.to_s
 
+            # We also use the resolution to determine the new status
+            bug_mapped_status = STATUS_MAPPING[bug.bug_status] 
+            if !bug_mapped_status
+              bug_mapped_status = discarded_status
+              bug_mapped_status = green_status if bug.resolution == "FIXED"
+            end
+              
+         
             issue = Issue.new(
               :project_id => @project_map[bug.product_id],
               :subject => bug.short_desc,
               :description => description || bug.short_desc,
               :author_id => map_user(bug.reporter),
               :priority => PRIORITY_MAPPING[bug.priority] || DEFAULT_PRIORITY,
-              :status => STATUS_MAPPING[bug.bug_status] || DEFAULT_STATUS,
+              :status => bug_mapped_status,
               :start_date => bug.creation_ts,
               :created_on => bug.creation_ts,
               :updated_on => bug.delta_ts
