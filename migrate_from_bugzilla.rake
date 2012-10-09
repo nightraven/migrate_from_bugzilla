@@ -411,7 +411,7 @@ module ActiveRecord
             bug_mapped_status = STATUS_MAPPING[bug.bug_status]
 	    print "before if: "
 	    print bug_mapped_status + " ; "
-	    print "orig : " bug.bug_status + " ; "
+	    print "orig : " + bug.bug_status + " ; "
             if !bug_mapped_status 
               bug_mapped_status = DISCARDED_STATUS
               bug_mapped_status = GREEN_STATUS if bug.resolution == "FIXED"
