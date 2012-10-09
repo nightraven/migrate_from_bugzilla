@@ -50,8 +50,8 @@ module ActiveRecord
         organge_status = IssueStatus.find_by_id(8)
         red_status = IssueStatus.find_by_id(9)
         yellow_status = IssueStatus.find_by_id(10)
-        GREEN_STATUS = IssueStatus.find_by_id(11)
-        released_status = IssueStatus.find_by_id(12)
+        green_status = IssueStatus.find_by_id(11)
+        RELEASED_STATUS = IssueStatus.find_by_id(12)
         DISCARDED_STATUS = IssueStatus.find_by_id(13)
 
      
@@ -409,11 +409,9 @@ module ActiveRecord
 
             # We also use the resolution to determine the new status
             bug_mapped_status = STATUS_MAPPING[bug.bug_status]
-	    print "before if: "
-	    print "orig : " + bug.bug_status + " ; "
             if !bug_mapped_status 
               bug_mapped_status = DISCARDED_STATUS
-              bug_mapped_status = GREEN_STATUS if bug.resolution == "FIXED"
+              bug_mapped_status = RELEASES_STATUS if bug.resolution == "FIXED"
             end
   
          
