@@ -63,9 +63,6 @@ module ActiveRecord
           "REOPENED" => red_status,
           "RESOLVED" => yellow_status,
         }
-        # actually close resolved issues
-        resolved_status.is_closed = true
-        resolved_status.save
 
         priorities = IssuePriority.all(:order => 'id')
         PRIORITY_MAPPING = {
