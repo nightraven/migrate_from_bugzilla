@@ -413,7 +413,7 @@ module ActiveRecord
               bug_mapped_status = DISCARDED_STATUS
               bug_mapped_status = GREEN_STATUS if bug.resolution == "FIXED"
             end
-              
+            print bug_mapped_status  
          
             issue = Issue.new(
               :project_id => @project_map[bug.product_id],
