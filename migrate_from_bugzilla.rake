@@ -410,8 +410,8 @@ module ActiveRecord
             # We also use the resolution to determine the new status
             bug_mapped_status = STATUS_MAPPING[bug.bug_status] 
             if !bug_mapped_status 
-              bug_mapped_status = BugzillaMigrate.discarded_status
-              bug_mapped_status = BugzillaMigrate.green_status if bug.resolution == "FIXED"
+              bug_mapped_status = BugzillaMigrate::discarded_status
+              bug_mapped_status = BugzillaMigrate::green_status if bug.resolution == "FIXED"
             end
               
          
