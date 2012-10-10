@@ -159,6 +159,7 @@ module ActiveRecord
           set_table_name :products
 
           has_many :components, :class_name => "BugzillaComponent", :foreign_key => :product_id
+          has_many :milestones, :class_name => "BugzillaMilestone", :foreign_key => :product_id
           has_many :versions, :class_name => "BugzillaVersion", :foreign_key => :product_id
           has_many :bugs, :class_name => "BugzillaBug", :foreign_key => :product_id
         end
@@ -169,6 +170,10 @@ module ActiveRecord
 
         class BugzillaVersion < ActiveRecord::Base
           set_table_name :versions
+        end
+
+        class BugzillaMilestone < ActiveRecord::Base
+          set_table_name :milestones
         end
 
         class BugzillaBug < ActiveRecord::Base
@@ -331,7 +336,7 @@ module ActiveRecord
             print '.'
             $stdout.flush
 
-            product.versions.each do |version|
+            product.milestones.each do |version|
               Version.create(:name => version.value, :project => project)
             end
 
