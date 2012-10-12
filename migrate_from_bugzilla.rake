@@ -288,7 +288,6 @@ module ActiveRecord
             existing_redmine_user = User.find_by_mail(profile_email)
             if existing_redmine_user
               @user_map[profile.userid] = existing_redmine_user.id
-            else if 
             else
               # create the new user with its own fresh pk
               # and make an entry in the mapping
