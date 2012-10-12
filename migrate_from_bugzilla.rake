@@ -288,6 +288,7 @@ module ActiveRecord
             existing_redmine_user = User.find_by_mail(profile_email)
             if existing_redmine_user
               @user_map[profile.userid] = existing_redmine_user.id
+            else if 
             else
               # create the new user with its own fresh pk
               # and make an entry in the mapping
@@ -311,10 +312,10 @@ module ActiveRecord
             end
           end
           ### avoidance of duplicate user - manual hack fix!! 
-          @user_map[321] = 343 # streitel
-          @user_map[211] = 340 # pfaller
-          @user_map[302] = 342 # kanis
-          @user_map[331] = 344 # nils
+          @user_map[145] = 343 # streitel
+          @user_map[34] = 340 # pfaller
+          @user_map[126] = 342 # kanis
+          @user_map[155] = 344 # nils
           print '.'
           $stdout.flush
         end
