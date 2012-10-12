@@ -310,6 +310,11 @@ module ActiveRecord
               @user_map[profile.userid] = user.id
             end
           end
+          ### avoidance of duplicate user - manual hack fix!! 
+          @user_map[321] = 343 # streitel
+          @user_map[211] = 340 # pfaller
+          @user_map[302] = 342 # kanis
+          @user_map[331] = 344 # nils
           print '.'
           $stdout.flush
         end
